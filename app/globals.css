@@ -1,0 +1,64 @@
+:root{--red:#e11d2a;--red2:#c41e3a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#000;color:#fff;font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(196,30,58,.22),transparent 55%),radial-gradient(ellipse at 80% 110%,rgba(225,29,42,.12),transparent 50%);pointer-events:none;z-index:0}
+a{color:inherit;text-decoration:none}
+.wm{position:fixed;top:22px;left:26px;font-weight:800;letter-spacing:.18em;font-size:14px;z-index:5;text-transform:uppercase}
+.wm b{color:var(--red)}
+.back{position:fixed;top:22px;right:26px;font-size:12px;letter-spacing:.12em;color:#9aa;z-index:5;text-transform:uppercase;border:1px solid rgba(255,255,255,.14);padding:7px 14px;border-radius:99px;transition:.2s}
+.back:hover{border-color:var(--red);color:#fff}
+.wrap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 20px 140px}
+.card{width:100%;max-width:560px;background:rgba(16,16,24,.55);border:1px solid rgba(196,30,58,.45);border-radius:20px;padding:38px 34px;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03) inset}
+.step{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:10px}
+.card h1{font-size:27px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.card .sub{color:#9aa;font-size:13.5px;margin-bottom:26px;line-height:1.5}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a8a96;margin-bottom:7px}
+.field input{width:100%;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:13px 15px;color:#fff;font-size:15px;font-family:inherit;transition:.2s;outline:none}
+.field input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(225,29,42,.15)}
+.row{border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:16px 18px;margin-bottom:12px;background:rgba(0,0,0,.35);transition:.2s;cursor:pointer}
+.row:hover{border-color:var(--red);background:rgba(196,30,58,.08)}
+.row.sel{border-color:var(--red);background:rgba(196,30,58,.12)}
+.row .t{font-size:15px;font-weight:700;margin-bottom:3px}
+.row .d{font-size:12.5px;color:#9aa;line-height:1.45}
+.row .p{float:right;color:var(--red);font-weight:800;font-size:15px}
+.cta{width:100%;margin-top:14px;background:linear-gradient(180deg,var(--red),var(--red2));color:#fff;border:none;border-radius:11px;padding:14px;font-size:15px;font-weight:700;letter-spacing:.02em;cursor:pointer;font-family:inherit;transition:.2s;box-shadow:0 10px 30px rgba(196,30,58,.35)}
+.cta:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.cta:disabled{opacity:.55;cursor:default;transform:none}
+.muted{text-align:center;margin-top:18px;font-size:12.5px;color:#8a8a96}
+.muted a{color:var(--red)}
+.prog{display:flex;gap:6px;margin-bottom:26px}
+.prog i{height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,.12)}
+.prog i.on{background:var(--red)}
+.big{font-size:46px;font-weight:800;letter-spacing:-.03em;margin:6px 0}
+.err{color:#ff6b6b;font-size:13px;margin-top:8px}
+.hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px}
+.hero h1{font-size:clamp(40px,9vw,86px);font-weight:800;letter-spacing:-.04em;line-height:1}
+.hero h1 b{color:var(--red)}
+.hero p{color:#9aa;font-size:clamp(15px,2.4vw,19px);margin:20px 0 34px;max-width:560px;line-height:1.6}
+.hbtn{display:inline-block;background:linear-gradient(180deg,var(--red),var(--red2));color:#fff;border-radius:12px;padding:15px 34px;font-size:16px;font-weight:700;box-shadow:0 14px 40px rgba(196,30,58,.4);transition:.2s}
+.hbtn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.ghost{display:inline-block;margin-left:12px;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:15px 26px;font-size:15px;color:#ccd;transition:.2s}
+.ghost:hover{border-color:var(--red);color:#fff}
+
+/* ===== SHARED SCREEN DESIGN — field wall + crown + rainbow wordmark + glass Mellie dock ===== */
+.fieldwall{position:fixed;inset:0;z-index:0;display:block;pointer-events:none}
+.screen{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px 170px}
+.crown{width:66px;height:43px;margin-bottom:20px;filter:drop-shadow(0 8px 22px rgba(225,29,42,.55))}
+.wordmark{font-weight:800;letter-spacing:.05em;line-height:1;font-size:clamp(50px,13vw,128px);
+  background:linear-gradient(90deg,#ff3b3b,#ff9f1c,#ffe14d,#48d97a,#3bb0ff,#9b6bff,#ff5fd2,#ff3b3b);
+  background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  animation:wm-rainbow 9s linear infinite}
+@keyframes wm-rainbow{to{background-position:200% center}}
+.tagline{color:#aab2c0;font-size:clamp(15px,2.4vw,19px);margin:22px 0 32px;max-width:560px;line-height:1.6}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.mellie-dock{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:6;width:min(680px,92vw)}
+.mellie-reply{background:rgba(16,16,24,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;margin-bottom:10px;font-size:14px;color:#dde3ea;max-height:200px;overflow:auto;line-height:1.5}
+.mellie-bar{display:flex;gap:10px;align-items:center;background:rgba(16,16,24,.62);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:8px 8px 8px 16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.mellie-dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);flex:none}
+.mellie-bar input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:15px;font-family:inherit}
+.mellie-bar input::placeholder{color:#8a8a96}
+.mellie-bar button{background:linear-gradient(180deg,var(--red),var(--red2));color:#fff;border:none;border-radius:12px;width:44px;height:40px;font-size:16px;cursor:pointer;transition:.2s}
+.mellie-bar button:hover{filter:brightness(1.1)}
+.mellie-bar button:disabled{opacity:.6}
