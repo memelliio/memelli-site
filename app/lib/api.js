@@ -16,7 +16,7 @@ export const api = {
   sendChat: (message) => apiFetch('/api/mellie/chat', 'POST', { text: message }),
   // Signup -> user + customer + wallet
   submitSignup: (formData) => apiFetch('/api/auth/signup', 'POST', formData),
-  // session (credentialed: carries mio_sess cross-site)
-  whoami: () => apiFetch('/api/auth/whoami', 'GET', null, true),
+  // CEO_AUTH_ADMIN — the combined authority / lock-in point (credentialed: carries mio_sess)
+  ceoAuth: () => apiFetch('/api/ceo/auth/admin', 'GET', null, true),
   logout: () => apiFetch('/api/auth/logout', 'POST', {}, true)
 };
