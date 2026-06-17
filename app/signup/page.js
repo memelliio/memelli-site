@@ -1,40 +1,35 @@
-"use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Shell from "../../components/Shell";
-import { railPost, setToken, setCustomer } from "../lib/api";
+'use client';
+import { useState } from 'react';
+import { api } from '../lib/api';
 
-export default function Signup() {
-  const router = useRouter();
-  const [f, setF] = useState({ name: "", email: "", password: "", phone: "" });
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState("");
-  const on = (k) => (e) => setF({ ...f, [k]: e.target.value });
+export default function SignupPage() {
+  const [formData, setFormData] = useState({ fullName: '', email: '', phone: '', password: '' });
+  const [status, setStatus] = useState('');
 
-  async function submit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setErr(""); setBusy(true);
-    const { status, data } = await railPost("/api/signup", f);
-    setBusy(false);
-    if (status === 503) { setErr("Signups are paused right now. Check back soon."); return; }
-    if (!data.ok) { setErr(data.error || "Could not sign up."); return; }
-    setToken(data.token);
-    if (data.customer && data.customer.id) setCustomer(data.customer.id);
-    router.push("/plans");
+    setStatus('processing...');
+    try {
+      // Maps direct cross-schema insertion data targets straight to the rail
+      await api.submitSignup(formData);
+      setStatus('Account initialized.');
+    } catch (error) {
+      setStatus('Initialization error.');
+      console.error('Signup network pipeline error:', error);
+    }
   }
 
   return (
-    <Shell step={1} total={6} label="Step 1 of 6 · Create account"
-      title="Create your account" sub="One sign-up starts your whole path — credit, funding, and coaching.">
-      <form onSubmit={submit}>
-        <div className="field"><label>Full name</label><input value={f.name} onChange={on("name")} required /></div>
-        <div className="field"><label>Email</label><input type="email" value={f.email} onChange={on("email")} required /></div>
-        <div className="field"><label>Password</label><input type="password" value={f.password} onChange={on("password")} required /></div>
-        <div className="field"><label>Phone</label><input value={f.phone} onChange={on("phone")} placeholder="+1…" /></div>
-        <button className="cta" disabled={busy}>{busy ? "Creating…" : "Create account"}</button>
-        {err ? <div className="err">{err}</div> : null}
+    <div style={{ backgroundColor: '#000', color: '#fff', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '300px' }}>
+        <h2>Create your account</h2>
+        <input type="text" placeholder="Full name" onChange={e => setFormData({ ...formData, fullName: e.target.value })} style={{ padding: '10px', backgroundColor: '#111', border: '1px solid #222', color: '#fff' }} required />
+        <input type="email" placeholder="Email" onChange={e => setFormData({ ...formData, email: e.target.value })} style={{ padding: '10px', backgroundColor: '#111', border: '1px solid #222', color: '#fff' }} required />
+        <input type="text" placeholder="Phone" onChange={e => setFormData({ ...formData, phone: e.target.value })} style={{ padding: '10px', backgroundColor: '#111', border: '1px solid #222', color: '#fff' }} required />
+        <input type="password" placeholder="Password" onChange={e => setFormData({ ...formData, password: e.target.value })} style={{ padding: '10px', backgroundColor: '#111', border: '1px solid #222', color: '#fff' }} required />
+        <button type="submit" style={{ padding: '12px', backgroundColor: '#ff0000', color: '#fff', border: 'none', fontWeight: 'bold' }}>Create account</button>
+        {status && <p style={{ fontSize: '12px', color: '#aaa' }}>{status}</p>}
       </form>
-      <div className="muted">Already have an account? <a href="/signin">Sign in</a></div>
-    </Shell>
+    </div>
   );
 }

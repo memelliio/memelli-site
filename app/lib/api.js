@@ -1,37 +1,28 @@
-export const RAIL =
-  process.env.NEXT_PUBLIC_RAIL ||
-  "https://memelli-bar-control.up.railway.app";
+const BASE_URL = 'https://memelli-bar-control.up.railway.app';
+const AUTH_TOKEN = 'Bearer 1604';
 
-export function getToken() {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem("memelli_token") || "";
+async function apiFetch(endpoint, method = 'POST', body = null) {
+  const options = {
+    method,
+    headers: {
+      'Authorization': AUTH_TOKEN,
+      'Content-Type': 'application/json'
+    }
+  };
+  if (body) options.body = JSON.stringify(body);
+
+  const response = await fetch(`${BASE_URL}${endpoint}`, options);
+  if (!response.ok) {
+    throw new Error(`API Error ${response.status}: ${response.statusText}`);
+  }
+  return response.json();
 }
-export function setToken(t) {
-  if (typeof window !== "undefined") localStorage.setItem("memelli_token", t || "");
-}
-export function setCustomer(id) {
-  if (typeof window !== "undefined") localStorage.setItem("memelli_customer", id || "");
-}
-export function getCustomer() {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem("memelli_customer") || "";
-}
-export function authHeaders() {
-  const t = getToken();
-  return t ? { Authorization: "Bearer " + t } : {};
-}
-export async function railGet(path) {
-  const r = await fetch(RAIL + path, { headers: authHeaders(), credentials: "include" });
-  return r.json();
-}
-export async function railPost(path, body) {
-  const r = await fetch(RAIL + path, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
-    credentials: "include",
-    body: JSON.stringify(body || {})
-  });
-  let data = {};
-  try { data = await r.json(); } catch (e) {}
-  return { status: r.status, data };
-}
+
+export const api = {
+  // GrogBath -> live swarm telemetry
+  getLiveData: () => apiFetch('/api/live_data', 'POST'),
+  // MellieDock -> brain v15. Endpoint consumes `text` (verified on the wire); `message` is ignored.
+  sendChat: (message) => apiFetch('/api/mellie/chat', 'POST', { text: message }),
+  // Signup -> cross-schema mutation (user + customer + wallet)
+  submitSignup: (formData) => apiFetch('/api/auth/signup', 'POST', formData)
+};
