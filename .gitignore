@@ -1,7 +1,7 @@
-node_modules/
-.next/
-.env*
-.srv.log
-.srv.err
-npm-debug.log*
-package-lock.json
+node_modules
+.next
+.home-live.png
+.memelli-io.png
+.v1.log
+.v1.err
+*.log
