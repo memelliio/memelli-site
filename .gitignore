@@ -4,3 +4,4 @@ node_modules/
 .srv.log
 .srv.err
 npm-debug.log*
+package-lock.json
