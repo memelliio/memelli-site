@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../app/lib/api';
 
-export default function AuthControl() {
+export default function AuthControl({ onSignup }) {
   const [ceo, setCeo] = useState(false);
 
   useEffect(() => {
@@ -25,5 +25,13 @@ export default function AuthControl() {
       </div>
     );
   }
-  return <a href="/signup" style={{ ...base, textDecoration: 'none' }}>Sign Up</a>;
+  // In-place hot-swap to the signup surface (no route navigation). Stamp: universal-shell v1.
+  return (
+    <button
+      onClick={onSignup}
+      style={{ ...base, background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', fontWeight: 'bold' }}
+    >
+      Sign Up
+    </button>
+  );
 }
