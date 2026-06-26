@@ -1,0 +1,20 @@
+ (function(){
+  /* [COMPOSER - DESIGN FRONTEND v2] LANE WINDOWS renderer - window.mbLaneWindow(laneKey) opens the DESIGNED glass window with the lane's form (from /api/lane_windows), submits to the lane's endpoint. ?win=<lane> deep-link auto-opens. No scattered dock (clean shell); the bar/deepinfra opens the right window for the task. */
+  var reg={};
+  function esc(x){ return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function open(w){ if(!w) return; if(document.querySelector('.mb-lanewin')) return;
+    var ov=document.createElement('div'); ov.className='mb-lanewin'; ov.style.cssText='position:fixed;top:0;left:0;right:0;bottom:84px;z-index:60;display:grid;place-items:center;background:rgba(0,0,0,.42)';
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+    var win=document.createElement('div'); win.style.cssText='width:min(440px,92vw);background:rgba(18,20,28,0.42);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:22px 22px 20px;color:#eef2ff;font-family:Inter,system-ui,sans-serif;box-shadow:0 24px 70px rgba(0,0,0,.55)';
+    var h='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-weight:800;font-size:17px">'+esc(w.title||w.lane)+'</div><div style="cursor:pointer;opacity:.55;font-size:22px;line-height:1" onclick="this.closest(\'.mb-lanewin\').remove()">&times;</div></div>';
+    if(w.intro) h+='<div style="font-size:12.5px;color:#9fb0d0;margin-bottom:12px;line-height:1.4">'+esc(w.intro)+'</div>';
+    (w.fields||[]).forEach(function(f){ h+='<label style="display:block;font-size:11px;color:#9fb0d0;margin:11px 0 4px;letter-spacing:.03em">'+esc(f.label||f.name)+'</label><input data-n="'+esc(f.name)+'" type="'+esc(f.type||'text')+'" placeholder="'+esc(f.placeholder||'')+'" style="width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:11px;font-size:14px;outline:none">'; });
+    h+='<button class="mb-go" style="width:100%;margin-top:18px;background:linear-gradient(135deg,#c41e3a,#ff5f6d);border:0;color:#fff;font-weight:800;border-radius:11px;padding:12px;font-size:14px;cursor:pointer">'+esc(w.submit_label||'Submit')+'</button><div class="mb-res" style="font-size:12.5px;color:#9fe9bd;margin-top:11px;min-height:15px;line-height:1.4"></div>';
+    win.innerHTML=h; ov.appendChild(win); document.body.appendChild(ov);
+    win.querySelector('.mb-go').onclick=function(){ var b={}; win.querySelectorAll('input[data-n]').forEach(function(i){ b[i.dataset.n]=i.value; }); var res=win.querySelector('.mb-res'); res.textContent='...'; if(!w.submit){ res.textContent='No endpoint configured.'; return; } fetch(w.submit,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json();}).then(function(j){ res.textContent=(j&&(j.message||j.reply||(j.ok?'Done.':j.error)))||'Done.'; }).catch(function(){ res.textContent='Connection error'; }); };
+  }
+  window.mbLaneWindow=function(key){ if(reg[key]){ open(reg[key]); return; } fetch('/api/lane_windows').then(function(r){return r.json();}).then(function(j){ (j.windows||[]).forEach(function(x){ reg[x.lane]=x; }); if(reg[key]) open(reg[key]); }); };
+  function autoOpen(){ var m=(location.search||'').match(/[?&]win=([a-z_]+)/); if(m){ window.mbLaneWindow(m[1]); } }
+  function load(){ try{ fetch('/api/lane_windows').then(function(r){return r.json();}).then(function(j){ (j.windows||[]).forEach(function(x){ reg[x.lane]=x; }); autoOpen(); }).catch(function(){}); }catch(e){} }
+  var t=setInterval(function(){ if(document.body){ clearInterval(t); load(); setInterval(load,120000); } },500);
+})(); 

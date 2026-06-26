@@ -5,3 +5,14 @@ node_modules
 .v1.log
 .v1.err
 *.log
+
+# scratch / PII / tokens — never ship
+cr.txt
+dp.txt
+Sedrick_Lewis_Experian_dispute.txt
+PATTERN_B_NOTE.md
+PORT_MANIFEST.txt
+keep_manifest.txt
+public/schema-test.html
+nodes/
+tools/

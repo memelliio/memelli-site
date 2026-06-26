@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Memelli — Ask</title>
+<style>
+:root{--bg:#0b0b0f;--card:rgba(255,255,255,.04);--line:rgba(255,255,255,.10);--mut:rgba(255,255,255,.55);--acc:#9fe9bd}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 700px at 50% -10%,#15131d,#0b0b0f 60%);color:#fff;font:15px/1.5 Inter,system-ui,-apple-system,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:42px 20px 80px}
+h1{font-size:26px;font-weight:800;margin:0 0 4px;background:linear-gradient(90deg,#ff5f6d,#ffd479,#9fe9bd,#5fa8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);margin:0 0 22px;font-size:13.5px}
+.askbar{display:flex;gap:8px}
+#q{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;color:#fff;font-size:15px;outline:none}
+#q:focus{border-color:rgba(159,233,189,.5)}
+#go{cursor:pointer;border:0;border-radius:12px;padding:0 20px;font-weight:700;color:#06140d;background:linear-gradient(135deg,#9fe9bd,#5fa8ff)}
+#go:disabled{opacity:.5;cursor:default}
+.res{margin-top:24px;display:none}
+.answer{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px;margin-bottom:18px;white-space:pre-wrap}
+.lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:0 0 9px}
+.chip{display:inline-block;background:rgba(95,168,255,.10);border:1px solid rgba(95,168,255,.30);color:#bcd9ff;border-radius:999px;padding:6px 12px;margin:0 7px 7px 0;font-size:12.5px;cursor:pointer}
+.src{border-top:1px solid var(--line);padding:11px 0;display:block;color:#dfe7ff;text-decoration:none}
+.src:hover{color:var(--acc)}
+.src .t{font-weight:600;font-size:13.5px}
+.src .m{color:var(--mut);font-size:11.5px}
+.note{color:var(--mut);font-size:12.5px;margin-top:10px}
+.spin{color:var(--acc);font-size:13px}
+</style></head>
+<body><div class="wrap">
+<h1>Ask Memelli</h1>
+<p class="sub">Credit, funding, business — ask anything. Answers run on our own models; the runner pulls live sources.</p>
+<div class="askbar">
+  <input id="q" placeholder="e.g. how do I remove a charge-off from my credit report?" autocomplete="off">
+  <button id="go">Ask</button>
+</div>
+<div class="res" id="res"></div>
+</div>
+<script>
+var RAIL='/api/forum/ask';
+var qEl=document.getElementById('q'),goEl=document.getElementById('go'),res=document.getElementById('res');
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function ask(){
+  var q=qEl.value.trim(); if(!q)return;
+  goEl.disabled=true; res.style.display='block';
+  res.innerHTML='<div class="spin">Running the question…</div>';
+  fetch(RAIL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q})})
+  .then(function(r){return r.json();}).then(function(d){
+    goEl.disabled=false;
+    if(!d||!d.ok){ res.innerHTML='<div class="answer">Could not run that one. '+esc(d&&d.error)+'</div>'; return; }
+    var html='';
+    if(d.answer){ html+='<p class="lbl">Answer</p><div class="answer">'+esc(d.answer)+'</div>'; }
+    var sug=d.google_suggest||[];
+    if(sug.length){ html+='<p class="lbl">Related questions</p><div>'+sug.map(function(s){return '<span class="chip" onclick="document.getElementById('q').value=this.textContent;document.getElementById('go').click()">'+esc(s)+'</span>';}).join('')+'</div>'; }
+    var rd=d.reddit||[];
+    if(rd.length){ html+='<p class="lbl" style="margin-top:18px">Sources</p>'+rd.map(function(x){return '<a class="src" href="'+esc(x.url)+'" target="_blank"><span class="t">'+esc(x.title)+'</span><br><span class="m">r/'+esc(x.subreddit)+' · '+esc(x.score)+' pts</span></a>';}).join(''); }
+    if(!d.answer && !sug.length && !rd.length){ html+='<div class="answer">No live sources came back for that (the rail IP gets blocked). Once the runner is on our models + IPs, this fills with a written answer.</div>'; }
+    html+='<p class="note">stored as question #'+esc(d.id)+' · runner: '+esc(d.runner)+'</p>';
+    res.innerHTML=html;
+  }).catch(function(e){ goEl.disabled=false; res.innerHTML='<div class="answer">Network error: '+esc(e)+'</div>'; });
+}
+goEl.onclick=ask; qEl.addEventListener('keydown',function(e){if(e.key==='Enter')ask();});
+qEl.focus();
+</script>
+</body></html>
