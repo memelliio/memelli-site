@@ -6,6 +6,7 @@
 // hits the rail, asynchronously after first paint.
 const RAIL = "https://memelli-bar-control.up.railway.app";
 const nextConfig = {
+  output: "standalone",
   reactStrictMode: true,
   env: { NEXT_PUBLIC_RAIL: RAIL },
   // The INDEX (app.html, served at / and /app) must NEVER be cached, or browsers
